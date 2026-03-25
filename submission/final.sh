@@ -362,18 +362,18 @@ SECONDARY_OUTPUT_VALUE=$(bitcoin-cli -regtest decoderawtransaction "$SECONDARY_T
 check_cmd "Secondary output value extraction" "SECONDARY_OUTPUT_VALUE" "$SECONDARY_OUTPUT_VALUE"
 
 TIMELOCK_FEE=1000 # Use a simple fee of 1000 satoshis for this exercise
-TIMELOCK_AMOUNT=
+TIMELOCK_AMOUNT=$((SECONDARY_OUTPUT_VALUE - TIMELOCK_FEE))
 check_cmd "Timelock amount calculation" "TIMELOCK_AMOUNT" "$TIMELOCK_AMOUNT"
 
 # Convert to BTC
 TIMELOCK_BTC=$(echo "scale=8; $TIMELOCK_AMOUNT/100000000" | bc | awk '{printf "%.8f", $0}')
 
 # STUDENT TASK: Create the outputs JSON structure
-TIMELOCK_OUTPUTS=
+TIMELOCK_OUTPUTS='{"'$TIMELOCK_ADDRESS'":'$TIMELOCK_BTC'}'
 check_cmd "Timelock output creation" "TIMELOCK_OUTPUTS" "$TIMELOCK_OUTPUTS"
 
 # STUDENT TASK: Create the raw transaction with timelock
-TIMELOCK_TX=
+TIMELOCK_TX=$(bitcoin-cli -regtest createrawtransaction "$TIMELOCK_INPUTS" "$TIMELOCK_OUTPUTS")
 check_cmd "Timelock transaction creation" "TIMELOCK_TX" "$TIMELOCK_TX"
 
 echo "Successfully created transaction with 10-block relative timelock!"
