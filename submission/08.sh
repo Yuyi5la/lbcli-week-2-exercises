@@ -9,8 +9,6 @@ total_sats=$(bitcoin-cli -regtest decoderawtransaction "$raw_tx" | jq '[.vout[].
 fee=20000
 send_sats=$((total_sats - fee))
 send_btc=$(awk -v s="$send_sats" 'BEGIN { printf "%.8f", s/100000000 }')
-
-inputs=$(jq -n --arg txid "$txid" '[{"txid":$txid,"vout":0,"sequence":4294967293},{"txid":$txid,"vout":1,"sequence":4294967293}]')
+inputs=$(jq -n --arg txid "$TXID" '[{"txid":$txid,"vout":0,"sequence":4294967293},{"txid":$txid,"vout":1,"sequence":4294967293}]')
 outputs="{\"$recipient\":$send_btc}"
-
 bitcoin-cli -regtest -named createrawtransaction inputs="$inputs" outputs="$outputs"
