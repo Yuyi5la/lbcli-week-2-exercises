@@ -88,10 +88,10 @@ echo ""
 # STUDENT TASK: Extract the available UTXOs from the decoded transaction for spending
 # WRITE YOUR SOLUTION BELOW:
 UTXO_TXID=$TXID
-UTXO_VOUT_INDEX=0
+UTXO_VOUT_INDEX=$(bitcoin-cli -regtest decoderawtransaction $BASE_TX | jq -r '.vout | .[0] | .n' )
 check_cmd "UTXO vout selection" "UTXO_VOUT_INDEX" "$UTXO_VOUT_INDEX"
 
-UTXO_VALUE=$FIRST_OUTPUT_VALUE
+UTXO_VALUE=$(bitcoin-cli -regtest decoderawtransaction $BASE_TX | jq -r '.vout | .[0] | .value' | awk '{s=$1} END {print int(s*100000000 +0.5)} ' )
 check_cmd "UTXO value extraction" "UTXO_VALUE" "$UTXO_VALUE"
 
 echo "Selected UTXO:"
